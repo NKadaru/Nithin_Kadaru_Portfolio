@@ -45,3 +45,5 @@ npm-debug.log*
 # ---------------------------------------------------------------------------
 PORTFOLIO_QUESTIONNAIRE.md
 DECISIONS.md
+.vercel
+.env*

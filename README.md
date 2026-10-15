@@ -4,7 +4,7 @@ A premium, scroll-driven personal portfolio. The centrepiece is a **true 360°
 hero**: a 3D subject whose rotation is driven directly by scroll position, with
 the final frame landing exactly on the first.
 
-**Live:** _(pending first deploy — see [DEPLOY.md](./DEPLOY.md))_
+**Live:** <https://nithin-kadaru-portfolio.vercel.app>
 
 ---
 
