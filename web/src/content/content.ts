@@ -211,7 +211,7 @@ export const stats: Stat[] = [
 
 export const marqueeItems: string[] = [
   '.NET ENGINEERING',
-  'API DESIGN',
+  'REST API DESIGN',
   'SYSTEM INTEGRATION',
   'CLOUD & CI/CD',
   'FULL-STACK DEVELOPMENT',
@@ -237,7 +237,7 @@ export const projects: Project[] = [
     id: 'billing-translation-layer',
     title: 'Billing Systems Translation Layer',
     category: 'Enterprise Integration',
-    tech: ['.NET 10', 'C#', 'ASP.NET Core Web API', 'REST', 'SQL Server'],
+    tech: ['.NET 10', 'C#', 'ASP.NET Core Web API', 'REST APIs', 'SQL Server'],
     problem:
       'Multiple billing platforms spoke incompatible data formats, so every new integration meant bespoke point-to-point glue code.',
     approach:
