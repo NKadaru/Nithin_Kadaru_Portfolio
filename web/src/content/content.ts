@@ -81,14 +81,16 @@ export const site = {
   seoDescription:
     'Backend .NET engineer building the APIs, services and integrations enterprise systems run on. Selected work, experience and contact.',
   /**
-   * Q1.9: no custom domain yet — Cloudflare Pages subdomain.
-   * If this changes, update ALL FOUR of:
+   * Q1.9: no custom domain yet — Vercel project subdomain.
+   *
+   * This must match the slug Vercel assigns the project. Confirm it on the
+   * dashboard after the first deploy; if it differs, update ALL FOUR of:
    *   - here
    *   - index.html (canonical, og:url, og:image, twitter:image, JSON-LD url)
    *   - public/sitemap.xml
    *   - public/robots.txt
    */
-  canonicalUrl: 'https://nithin-kadaru.pages.dev',
+  canonicalUrl: 'https://nithin-kadaru-portfolio.vercel.app',
   location: 'West Chester, PA',
 } as const
 
