@@ -6,6 +6,9 @@ dist/
 dist-ssr/
 *.local
 
+# Vercel CLI local state (contains project linkage, created by `vercel pull`)
+.vercel/
+
 # Test + tooling output
 test-results/
 playwright-report/

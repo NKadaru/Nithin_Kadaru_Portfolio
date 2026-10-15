@@ -48,3 +48,68 @@ jobs:
           name: playwright-results
           path: web/test-results/
           retention-days: 7
+
+  deploy:
+    name: Deploy to Vercel
+    runs-on: ubuntu-latest
+    # THE GATE: this job cannot start until `verify` succeeds, so a failing
+    # lint, type error or test blocks the deploy entirely.
+    needs: verify
+    # Only deploy real pushes to main. Pull requests run `verify` only —
+    # a PR from a fork must never be able to publish to production.
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    environment:
+      name: production
+      url: ${{ steps.deploy.outputs.url }}
+    defaults:
+      run:
+        working-directory: web
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: web/.nvmrc
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+
+      # Pulls the project's production environment config into .vercel/ so the
+      # build below matches what Vercel itself would produce.
+      - name: Pull Vercel environment
+        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+      - name: Build for production
+        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+      # --prebuilt uploads the artifacts built in the step above rather than
+      # rebuilding on Vercel's infrastructure, so the deployed bytes are
+      # exactly the ones the tests ran against.
+      - name: Deploy
+        id: deploy
+        run: |
+          url=$(vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }})
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+          echo "Deployed to $url"
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+      - name: Summarise
+        run: |
+          {
+            echo "### Deployed"
+            echo ""
+            echo "<${{ steps.deploy.outputs.url }}>"
+            echo ""
+            echo "Gated on \`verify\`: lint, type-check, build and 26 end-to-end tests."
+          } >> "$GITHUB_STEP_SUMMARY"
