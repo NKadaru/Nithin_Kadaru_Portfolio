@@ -72,9 +72,13 @@ jobs:
     environment:
       name: production
       url: ${{ steps.deploy.outputs.url }}
-    defaults:
-      run:
-        working-directory: web
+    # Deliberately NOT `working-directory: web`.
+    #
+    # The Vercel project has Root Directory = "web", and the CLI applies that
+    # setting relative to where it is invoked. Run from inside `web` it
+    # resolves incorrectly — `vercel build` then executed `vite build` with no
+    # node_modules/.bin on PATH and died with exit 127. Run from the repo root
+    # it descends into `web` itself, which is the documented layout.
 
     steps:
       - uses: actions/checkout@v4
@@ -82,13 +86,17 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version-file: web/.nvmrc
+          cache: npm
+          cache-dependency-path: web/package-lock.json
 
-      # The build produced and verified by `verify`. Nothing is rebuilt here.
+      # The build produced and verified by `verify`, used below to replace
+      # whatever `vercel build` produces, so the bytes that go live are the
+      # bytes the tests ran against.
       - name: Download the tested build
         uses: actions/download-artifact@v4
         with:
           name: dist
-          path: web/dist/
+          path: tested-dist/
 
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
@@ -127,12 +135,34 @@ jobs:
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
         run: vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
 
-      # Wraps the downloaded dist/ in Build Output API v3 format, translating
-      # vercel.json's headers into output routes. `vercel build` is NOT used —
-      # it would rebuild the app, defeating the one-build guarantee, and it
-      # mis-resolves the project's Root Directory when run from inside `web`.
-      - name: Package the tested build for Vercel
-        run: node scripts/make-vercel-output.mjs
+      # `vercel build` is used rather than hand-assembling .vercel/output.
+      # A hand-rolled output omitted `builds.json`, which `vercel build`
+      # writes and which `vercel deploy --prebuilt` requires — the likely
+      # reason the previous two deploys failed at upload.
+      - name: Build output structure
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: vercel build --prod --token="$VERCEL_TOKEN"
+
+      # Swap in the tested artifact. `vercel build` has produced a valid
+      # output directory; its static payload is replaced with the exact files
+      # that passed the test suite, so the deployed bytes are the verified
+      # ones even though a build ran here to generate the wrapper.
+      - name: Replace static output with the tested build
+        run: |
+          out=".vercel/output/static"
+          if [ ! -d "$out" ]; then
+            echo "::error::$out not found — vercel build did not produce static output."
+            ls -R .vercel/output || true
+            exit 1
+          fi
+          echo "Before swap:"; ls "$out" | head -20
+          rm -rf "$out"
+          mkdir -p "$out"
+          cp -R tested-dist/. "$out/"
+          echo "After swap:"; ls "$out" | head -20
 
       - name: Deploy
         id: deploy
@@ -163,6 +193,5 @@ jobs:
             echo ""
             echo "<${{ steps.deploy.outputs.url }}>"
             echo ""
-            echo "The artifact deployed is the one \`verify\` built and tested —"
-            echo "no rebuild occurred at any point."
+            echo "Static payload is the artifact \`verify\` built and tested."
           } >> "$GITHUB_STEP_SUMMARY"
