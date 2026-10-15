@@ -23,15 +23,21 @@ async function bootHero(page: Page): Promise<void> {
  * Scroll to a fraction of the hero's own scroll distance and let the
  * Lenis → GSAP → useFrame pipeline settle.
  *
- * The hero section is 100vh + 300vh; the 360° maps across the section's
- * ScrollTrigger range (start top-top → end bottom-bottom), which is 300vh.
+ * The hero section is `100vh + SCROLL_VH`; the 360° maps across the section's
+ * ScrollTrigger range (start top-top → end bottom-bottom), which equals
+ * SCROLL_VH. Keep in sync with SCROLL_VH in src/sections/hero/Hero.tsx.
  */
+const HERO_SCROLL_VH = 1 // SCROLL_VH = 100vh
+
 async function scrollToHeroProgress(page: Page, fraction: number): Promise<void> {
-  await page.evaluate((f) => {
-    const scrollDistance = window.innerHeight * 3 // 300vh
-    window.scrollTo({ top: scrollDistance * f, behavior: 'instant' })
-  }, fraction)
-  // Lenis eases toward the target; poll until progress stops changing.
+  await page.evaluate(
+    ({ f, vh }) => {
+      const scrollDistance = window.innerHeight * vh
+      window.scrollTo({ top: scrollDistance * f, behavior: 'instant' })
+    },
+    { f: fraction, vh: HERO_SCROLL_VH },
+  )
+  // Lenis eases toward the target; poll until progress settles.
   await page.waitForFunction(
     (expected) => {
       const hero = window.__hero
@@ -186,15 +192,20 @@ test.describe('Hero accessibility & layout', () => {
   })
 
   /**
-   * SPEC §6: "Subject occupies about 75–85% of viewport height and remains
-   * perfectly centered."
+   * Subject framing.
    *
-   * Reads the projected bounding box measured inside the scene. Pixel
+   * Spec §6 asks for 75–85% of viewport height. Nithin asked for the subject
+   * smaller, so the target is now ~69% (measured 0.6875 at distance 11.6).
+   * These bounds assert the ACTUAL design intent rather than a spec figure the
+   * design deliberately departs from — see the note on FRAMING in
+   * HeroCanvas.tsx for how to restore spec compliance.
+   *
+   * Read from the projected bounding box measured inside the scene. Pixel
    * sampling was the obvious approach but a WebGL canvas cannot be read back
    * without `preserveDrawingBuffer`, which would cost performance on every
    * frame in production purely to enable a test.
    */
-  test('subject fills 75–85% of viewport height and is horizontally centred', async ({
+  test('subject fills ~69% of viewport height and is horizontally centred', async ({
     page,
   }) => {
     await bootHero(page)
@@ -204,8 +215,8 @@ test.describe('Hero accessibility & layout', () => {
     expect(
       hero.heightFraction,
       `subject height was ${(hero.heightFraction * 100).toFixed(1)}% of viewport`,
-    ).toBeGreaterThanOrEqual(0.75)
-    expect(hero.heightFraction).toBeLessThanOrEqual(0.85)
+    ).toBeGreaterThanOrEqual(0.64)
+    expect(hero.heightFraction).toBeLessThanOrEqual(0.74)
 
     // "Perfectly centered" — within 1% of the viewport's horizontal centre.
     expect(hero.centreOffset).toBeLessThan(0.01)

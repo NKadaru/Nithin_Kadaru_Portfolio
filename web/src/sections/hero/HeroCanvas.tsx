@@ -7,27 +7,29 @@ import { HeroSubject } from './HeroSubject'
 /**
  * Camera framing.
  *
- * Solved rather than eyeballed so the subject reliably lands inside the
- * 75–85% viewport-height band spec §6 requires:
+ * Solved rather than eyeballed, since the subject's size is the single most
+ * visible design decision in the hero:
  *
  *   visibleHeight = 2 · distance · tan(fov / 2)
  *   fill          = totalSubjectHeight / visibleHeight
  *
  * Total subject height is SUBJECT_HEIGHT plus the collar and plinth, ≈ 4.24.
- * With fov 32° and distance 9.9:
- *   visibleHeight = 2 · 9.9 · tan(16°) = 5.675
- *   fill          = 4.24 / 5.675 ≈ 0.747
  *
- * Perspective inflates the measured on-screen height a little above the
- * geometric figure, which lands the rendered subject around 80%. Verified by
- * measuring the rendered bounding box in e2e/hero.spec.ts rather than trusted
- * from the arithmetic alone — an earlier distance of 9.2 measured at 86%,
- * outside the band.
+ * NOTE — DELIBERATE DEVIATION FROM SPEC §6.
+ * The spec requires the subject at 75–85% of viewport height. Nithin asked for
+ * it smaller, so `distance` was increased from 9.9 (which measured ~78%) to
+ * 11.6, which measures 68.75%. The subject is still centred, still constant in
+ * scale, and still visually dominant — only less overwhelming. The test bounds
+ * in e2e/hero.spec.ts were moved to match, so they assert the actual intent
+ * rather than a figure the design no longer targets.
+ *
+ * To restore spec compliance, set distance back to 9.9 and the test bounds to
+ * 0.75–0.85.
  */
 const FRAMING = {
   fov: 32,
   fovMobile: 42,
-  distance: 9.9,
+  distance: 11.6,
   /** Lifts the subject slightly above centre, leaving room for hero text below. */
   targetY: 0.15,
 } as const

@@ -14,7 +14,7 @@ test('capture hero stills across the rotation', async ({ page }) => {
 
   for (const f of [0, 0.25, 0.5, 0.75, 1]) {
     await page.evaluate((frac) => {
-      window.scrollTo({ top: window.innerHeight * 3 * frac, behavior: 'instant' })
+      window.scrollTo({ top: window.innerHeight * 1 * frac, behavior: 'instant' })
     }, f)
     await page.waitForFunction(
       (expected) => Math.abs((window.__hero?.progress ?? -1) - expected) < 0.012,

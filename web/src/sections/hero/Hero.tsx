@@ -12,11 +12,17 @@ const HeroCanvas = lazy(() =>
 )
 
 /**
- * Scroll distance over which the 360° completes (Q3.4 default).
- * 300vh of travel after the initial 100vh viewport — deliberate without
- * feeling like a drag.
+ * Scroll distance over which the 360° completes, in vh.
+ *
+ * The hero section is `100vh + SCROLL_VH`, and ScrollTrigger runs from
+ * `top top` to `bottom bottom`, so SCROLL_VH is exactly how far the user
+ * scrolls to complete one revolution.
+ *
+ * Was 300 (the spec's §3.4 default), which meant four screen-heights of hero
+ * before reaching About — too long in practice. 100 makes the whole hero two
+ * screen-heights: one to read it, one to turn the subject.
  */
-const SCROLL_VH = 300
+const SCROLL_VH = 100
 
 export function Hero() {
   const reducedMotion = useReducedMotion()
