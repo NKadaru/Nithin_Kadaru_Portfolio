@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Nithin Kadaru">
+  <rect width="64" height="64" fill="#08080a"/>
+  <!-- N monogram in the display face's geometry, with the accent as a counter stroke -->
+  <path d="M16 48V16h6.4l15.2 21.2V16H44v32h-6.4L22.4 26.8V48H16Z" fill="#f2efe9"/>
+  <rect x="16" y="52" width="28" height="3" fill="#e4572e"/>
+</svg>

@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- SEO (spec §31) -->
+    <title>Nithin Kadaru — Backend .NET Engineer</title>
+    <meta
+      name="description"
+      content="Backend .NET engineer building the APIs, services and integrations enterprise systems run on. Selected work, experience and contact."
+    />
+    <meta name="author" content="Nithin Kadaru" />
+    <!-- TODO: update to a custom domain if one is bought. Must match
+         `site.canonicalUrl` in src/content/content.ts and public/sitemap.xml. -->
+    <link rel="canonical" href="https://nithin-kadaru.pages.dev/" />
+
+    <!-- Open Graph / LinkedIn share card (spec §31).
+         og:image MUST be a 1200x630 raster — LinkedIn, Slack and X do not
+         render SVG previews. Regenerate with:
+           npx playwright test e2e/og-image.spec.ts -->
+    <meta property="og:type" content="profile" />
+    <meta property="og:site_name" content="Nithin Kadaru" />
+    <meta property="og:title" content="Nithin Kadaru — Backend .NET Engineer" />
+    <meta
+      property="og:description"
+      content="Backend .NET engineer building the APIs, services and integrations enterprise systems run on."
+    />
+    <meta property="og:url" content="https://nithin-kadaru.pages.dev/" />
+    <meta property="og:image" content="https://nithin-kadaru.pages.dev/og/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Nithin Kadaru — I build scalable backend systems." />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Nithin Kadaru — Backend .NET Engineer" />
+    <meta
+      name="twitter:description"
+      content="Backend .NET engineer building the APIs, services and integrations enterprise systems run on."
+    />
+    <meta name="twitter:image" content="https://nithin-kadaru.pages.dev/og/og-image.png" />
+
+    <!-- Matches --color-void so there is no white flash before CSS loads. -->
+    <meta name="theme-color" content="#08080a" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!--
+      Structured data: tells Google this page is a person, which is what
+      surfaces a richer result when a recruiter searches the name.
+    -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Nithin Kadaru",
+        "jobTitle": "Backend .NET Engineer",
+        "url": "https://nithin-kadaru.pages.dev/",
+        "email": "mailto:nithin12.reddy@outlook.com",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "West Chester",
+          "addressRegion": "PA",
+          "addressCountry": "US"
+        },
+        "sameAs": [
+          "https://www.linkedin.com/in/nithin-reddy-kadaru",
+          "https://github.com/NKadaru"
+        ],
+        "knowsAbout": [
+          "C#",
+          ".NET",
+          "ASP.NET Core",
+          "REST APIs",
+          "Entity Framework Core",
+          "Microsoft SQL Server",
+          "AWS",
+          "CI/CD"
+        ]
+      }
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

@@ -1,0 +1,196 @@
+@import 'tailwindcss';
+
+/* Self-hosted variable fonts — no third-party requests (spec §29, privacy). */
+@import '@fontsource-variable/archivo';
+@import '@fontsource-variable/inter';
+@import '@fontsource-variable/jetbrains-mono';
+
+/*
+  DESIGN SYSTEM — dark editorial (Q16.1 = dark).
+
+  Spec §4 mandates: premium, minimal, editorial, cinematic. Large expressive
+  typography, strong hierarchy, generous whitespace, thin borders, subtle
+  shadows. Explicitly forbidden: excessive rounded cards, rainbow gradients,
+  generic blobs, excessive floating elements, cheesy animation.
+
+  Palette is near-monochrome by design. Exactly one chromatic accent
+  (--color-accent), used only for interactive states, focus rings and small
+  emphasis — never for body copy, where it would fail contrast.
+  Change the accent in one place here to retheme the whole site.
+*/
+@theme {
+  /* --- Canvas & surfaces --- */
+  --color-void: #08080a; /* page background */
+  --color-canvas: #0c0c0f; /* raised background */
+  --color-surface: #131317; /* panels, nav blur base */
+  --color-hairline: #26262c; /* thin borders — spec §4 "thin borders" */
+  --color-hairline-strong: #3a3a42;
+
+  /* --- Type --- */
+  --color-bone: #f2efe9; /* primary text — warm off-white, 18.6:1 on void */
+  --color-bone-dim: #b8b5ae; /* secondary text — 9.4:1 on void */
+  --color-muted: #7d7a74; /* tertiary / labels — 4.6:1 on void */
+  --color-faint: #4a4852; /* decorative only, never text */
+
+  /* --- The single accent --- */
+  --color-accent: #e4572e; /* restrained vermilion */
+  --color-accent-dim: #8f3620;
+
+  /* --- Fonts --- */
+  --font-display: 'Archivo Variable', 'Archivo', system-ui, sans-serif;
+  --font-body: 'Inter Variable', 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
+
+  /*
+    --- Editorial type scale ---
+    Fluid clamps so headlines stay expressive on desktop without overflowing
+    mobile. No layout shift: every step is clamped, not JS-measured (spec §29).
+  */
+  --text-display: clamp(2.75rem, 11vw, 11rem);
+  --text-display--line-height: 0.88;
+  --text-display--letter-spacing: -0.045em;
+
+  --text-h1: clamp(2.25rem, 7vw, 6rem);
+  --text-h1--line-height: 0.95;
+  --text-h1--letter-spacing: -0.035em;
+
+  --text-h2: clamp(1.75rem, 4.5vw, 3.5rem);
+  --text-h2--line-height: 1.02;
+  --text-h2--letter-spacing: -0.025em;
+
+  --text-h3: clamp(1.25rem, 2.2vw, 1.75rem);
+  --text-h3--line-height: 1.2;
+  --text-h3--letter-spacing: -0.015em;
+
+  --text-lead: clamp(1.0625rem, 1.5vw, 1.375rem);
+  --text-lead--line-height: 1.5;
+
+  --text-label: 0.6875rem;
+  --text-label--line-height: 1;
+  --text-label--letter-spacing: 0.18em;
+
+  /* --- Motion (spec §25: typical duration 0.5–1.2s) --- */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-quint: cubic-bezier(0.83, 0, 0.17, 1);
+}
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    /* Lenis drives scrolling; native smooth would fight it. */
+    scroll-behavior: auto;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--color-void);
+    color: var(--color-bone);
+    font-family: var(--font-body);
+    font-synthesis-weight: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    overflow-x: clip;
+  }
+
+  /* Lenis requires these to manage scroll itself. */
+  html.lenis,
+  html.lenis body {
+    height: auto;
+  }
+  .lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+  }
+  .lenis.lenis-stopped {
+    overflow: clip;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    margin: 0;
+    text-wrap: balance;
+  }
+
+  p {
+    margin: 0;
+    text-wrap: pretty;
+  }
+
+  /* Visible, high-contrast focus for keyboard users (spec §31). */
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  /* Remove focus ring for mouse users only, never for keyboard. */
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  ::selection {
+    background-color: var(--color-accent);
+    color: var(--color-void);
+  }
+
+  img,
+  canvas {
+    display: block;
+    max-width: 100%;
+  }
+
+  /*
+    Reduced motion (spec §31). Animation is replaced by instant state, not by
+    a slower animation. GSAP/Framer/Lenis are additionally disabled in JS —
+    this is the CSS backstop.
+  */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer utilities {
+  /* Editorial eyebrow label — mono, wide-tracked, uppercase. */
+  .label {
+    font-family: var(--font-mono);
+    font-size: var(--text-label);
+    letter-spacing: var(--text-label--letter-spacing);
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+
+  /* Consistent page gutter. */
+  .gutter {
+    padding-inline: clamp(1.25rem, 5vw, 6rem);
+  }
+
+  /* Text-mask reveal (spec §25) — the parent clips, the child slides up. */
+  .mask {
+    overflow: clip;
+    display: block;
+  }
+
+  /* Hide a custom-cursor target from the native cursor on desktop only. */
+  @media (hover: hover) and (pointer: fine) {
+    .cursor-none-desktop {
+      cursor: none;
+    }
+  }
+}
