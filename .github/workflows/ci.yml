@@ -175,14 +175,31 @@ jobs:
           echo "url=$url" >> "$GITHUB_OUTPUT"
           echo "Deployed to $url"
 
-      - name: Verify the deployment responds
+      # Checks the PRODUCTION ALIAS, not the URL `vercel deploy` prints.
+      #
+      # That command returns a deployment-specific URL
+      # (project-<hash>-<scope>.vercel.app). Vercel's deployment protection
+      # makes those URLs require authentication, so curling one returns 401
+      # even when the deploy succeeded perfectly — which is exactly what
+      # happened in run #14. The production alias is the public address and
+      # the thing actually worth asserting.
+      - name: Verify production responds
+        env:
+          PROD_URL: https://nithin-kadaru-portfolio.vercel.app
         run: |
-          url="${{ steps.deploy.outputs.url }}"
-          echo "Checking $url"
-          code=$(curl -sS -o /dev/null -w '%{http_code}' --retry 5 --retry-delay 3 "$url")
+          echo "Deployment URL (may be auth-protected): ${{ steps.deploy.outputs.url }}"
+          echo "Checking production alias: $PROD_URL"
+          code=$(curl -sS -o /dev/null -w '%{http_code}' --retry 5 --retry-delay 4 "$PROD_URL")
           echo "HTTP $code"
           if [ "$code" != "200" ]; then
-            echo "::error::Deployment did not return 200 (got $code)."
+            echo "::error::Production did not return 200 (got $code)."
+            exit 1
+          fi
+          # Confirm the document is the app shell rather than an error page.
+          if curl -sS "$PROD_URL" | grep -q 'id="root"'; then
+            echo "Production is serving the application shell."
+          else
+            echo "::error::Production responded 200 but the page is not the app shell."
             exit 1
           fi
 
@@ -191,7 +208,9 @@ jobs:
           {
             echo "### Deployed"
             echo ""
-            echo "<${{ steps.deploy.outputs.url }}>"
+            echo "Production: <https://nithin-kadaru-portfolio.vercel.app>"
+            echo ""
+            echo "Deployment URL: ${{ steps.deploy.outputs.url }}"
             echo ""
             echo "Static payload is the artifact \`verify\` built and tested."
           } >> "$GITHUB_STEP_SUMMARY"
