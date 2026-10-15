@@ -77,32 +77,62 @@ jobs:
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
 
+      # Fail fast with a readable message. Without this, a missing secret
+      # reaches the CLI as an empty `--token=` and surfaces as
+      # "You defined --token, but it's missing a value", which points at the
+      # command rather than at the actual cause.
+      - name: Check required secrets are present
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: |
+          missing=0
+          for name in VERCEL_TOKEN VERCEL_ORG_ID VERCEL_PROJECT_ID; do
+            if [ -z "${!name}" ]; then
+              echo "::error::Repository secret $name is missing or empty."
+              missing=1
+            else
+              echo "$name is set (${#name} char name, value hidden)"
+            fi
+          done
+          if [ "$missing" -eq 1 ]; then
+            echo ""
+            echo "Add them at:"
+            echo "  Settings -> Secrets and variables -> Actions -> Repository secrets"
+            echo "Names must match exactly, with underscores and no spaces."
+            exit 1
+          fi
+
       # Pulls the project's production environment config into .vercel/ so the
       # build below matches what Vercel itself would produce.
       - name: Pull Vercel environment
-        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
         env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
 
       - name: Build for production
-        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
         env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: vercel build --prod --token="$VERCEL_TOKEN"
 
       # --prebuilt uploads the artifacts built in the step above rather than
       # rebuilding on Vercel's infrastructure, so the deployed bytes are
       # exactly the ones the tests ran against.
       - name: Deploy
         id: deploy
-        run: |
-          url=$(vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }})
-          echo "url=$url" >> "$GITHUB_OUTPUT"
-          echo "Deployed to $url"
         env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: |
+          url=$(vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN")
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+          echo "Deployed to $url"
 
       - name: Summarise
         run: |
