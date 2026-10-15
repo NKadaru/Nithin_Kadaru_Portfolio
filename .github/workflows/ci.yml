@@ -77,6 +77,13 @@ jobs:
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
 
+      # Each job runs on a fresh runner with its own filesystem, so the
+      # dependencies installed in `verify` are not present here. Without this,
+      # `vercel build` invokes `vite build` and fails with
+      # "sh: 1: vite: not found" (exit 127).
+      - name: Install dependencies
+        run: npm ci
+
       # Fail fast with a readable message. Without this, a missing secret
       # reaches the CLI as an empty `--token=` and surfaces as
       # "You defined --token, but it's missing a value", which points at the
