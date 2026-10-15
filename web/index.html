@@ -43,6 +43,10 @@
     <!-- Matches --color-void so there is no white flash before CSS loads. -->
     <meta name="theme-color" content="#08080a" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <!-- iOS ignores SVG icons on the home screen and will screenshot the page
+         instead unless a raster icon is provided. -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
 
     <!--
       Structured data: tells Google this page is a person, which is what

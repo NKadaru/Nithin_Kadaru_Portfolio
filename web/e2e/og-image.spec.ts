@@ -82,3 +82,54 @@ test('generate og:image', async ({ page }) => {
   await page.waitForTimeout(600)
   await page.screenshot({ path: 'public/og/og-image.png' })
 })
+
+/**
+ * Apple touch icon, 180x180 PNG.
+ *
+ * iOS ignores SVG favicons when a page is added to the home screen; without a
+ * raster icon it screenshots the page instead, which produces an unreadable
+ * thumbnail.
+ */
+test('generate apple-touch-icon', async ({ page }) => {
+  await page.setViewportSize({ width: 180, height: 180 })
+  await page.goto('/')
+  await page.waitForFunction(() => document.fonts.status === 'loaded', null, {
+    timeout: 20_000,
+  })
+
+  await page.setContent(
+    `<!doctype html>
+    <html>
+      <head>
+        <link rel="stylesheet" href="/src/index.css" />
+        <style>
+          * { margin: 0; padding: 0; box-sizing: border-box; }
+          body {
+            width: 180px; height: 180px;
+            background: #08080a;
+            display: flex; align-items: center; justify-content: center;
+            position: relative;
+          }
+          span {
+            font-family: 'Archivo Variable', Archivo, sans-serif;
+            font-weight: 600; font-size: 104px; line-height: 1;
+            letter-spacing: -0.05em; color: #f2efe9;
+          }
+          .rule {
+            position: absolute; bottom: 26px; left: 50%;
+            transform: translateX(-50%);
+            width: 62px; height: 6px; background: #e4572e;
+          }
+        </style>
+      </head>
+      <body>
+        <span>N</span>
+        <div class="rule"></div>
+      </body>
+    </html>`,
+    { waitUntil: 'load' },
+  )
+
+  await page.waitForTimeout(400)
+  await page.screenshot({ path: 'public/icons/apple-touch-icon.png' })
+})

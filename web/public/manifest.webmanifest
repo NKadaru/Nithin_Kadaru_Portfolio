@@ -1,0 +1,21 @@
+{
+  "name": "Nithin Kadaru — Backend .NET Engineer",
+  "short_name": "Nithin Kadaru",
+  "description": "Backend .NET engineer building the APIs, services and integrations enterprise systems run on.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#08080a",
+  "theme_color": "#08080a",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "/icons/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ]
+}
