@@ -49,11 +49,22 @@ jobs:
           path: web/test-results/
           retention-days: 7
 
+      # Hand the TESTED build to the deploy job. This is the whole point of the
+      # pipeline's shape: the artifact that passed the tests above is the exact
+      # artifact that goes live, with no second build anywhere.
+      - name: Upload build for deployment
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: web/dist/
+          retention-days: 7
+          if-no-files-found: error
+
   deploy:
     name: Deploy to Vercel
     runs-on: ubuntu-latest
-    # THE GATE: this job cannot start until `verify` succeeds, so a failing
-    # lint, type error or test blocks the deploy entirely.
+    # THE GATE: cannot start until `verify` succeeds, so a failing lint, type
+    # error or test blocks the deploy entirely.
     needs: verify
     # Only deploy real pushes to main. Pull requests run `verify` only —
     # a PR from a fork must never be able to publish to production.
@@ -71,18 +82,16 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version-file: web/.nvmrc
-          cache: npm
-          cache-dependency-path: web/package-lock.json
+
+      # The build produced and verified by `verify`. Nothing is rebuilt here.
+      - name: Download the tested build
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: web/dist/
 
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
-
-      # Each job runs on a fresh runner with its own filesystem, so the
-      # dependencies installed in `verify` are not present here. Without this,
-      # `vercel build` invokes `vite build` and fails with
-      # "sh: 1: vite: not found" (exit 127).
-      - name: Install dependencies
-        run: npm ci
 
       # Fail fast with a readable message. Without this, a missing secret
       # reaches the CLI as an empty `--token=` and surfaces as
@@ -100,7 +109,7 @@ jobs:
               echo "::error::Repository secret $name is missing or empty."
               missing=1
             else
-              echo "$name is set (${#name} char name, value hidden)"
+              echo "$name is set (value hidden)"
             fi
           done
           if [ "$missing" -eq 1 ]; then
@@ -111,25 +120,20 @@ jobs:
             exit 1
           fi
 
-      # Pulls the project's production environment config into .vercel/ so the
-      # build below matches what Vercel itself would produce.
-      - name: Pull Vercel environment
+      - name: Pull Vercel project settings
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
         run: vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
 
-      - name: Build for production
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-        run: vercel build --prod --token="$VERCEL_TOKEN"
+      # Wraps the downloaded dist/ in Build Output API v3 format, translating
+      # vercel.json's headers into output routes. `vercel build` is NOT used —
+      # it would rebuild the app, defeating the one-build guarantee, and it
+      # mis-resolves the project's Root Directory when run from inside `web`.
+      - name: Package the tested build for Vercel
+        run: node scripts/make-vercel-output.mjs
 
-      # --prebuilt uploads the artifacts built in the step above rather than
-      # rebuilding on Vercel's infrastructure, so the deployed bytes are
-      # exactly the ones the tests ran against.
       - name: Deploy
         id: deploy
         env:
@@ -141,6 +145,17 @@ jobs:
           echo "url=$url" >> "$GITHUB_OUTPUT"
           echo "Deployed to $url"
 
+      - name: Verify the deployment responds
+        run: |
+          url="${{ steps.deploy.outputs.url }}"
+          echo "Checking $url"
+          code=$(curl -sS -o /dev/null -w '%{http_code}' --retry 5 --retry-delay 3 "$url")
+          echo "HTTP $code"
+          if [ "$code" != "200" ]; then
+            echo "::error::Deployment did not return 200 (got $code)."
+            exit 1
+          fi
+
       - name: Summarise
         run: |
           {
@@ -148,5 +163,6 @@ jobs:
             echo ""
             echo "<${{ steps.deploy.outputs.url }}>"
             echo ""
-            echo "Gated on \`verify\`: lint, type-check, build and 26 end-to-end tests."
+            echo "The artifact deployed is the one \`verify\` built and tested —"
+            echo "no rebuild occurred at any point."
           } >> "$GITHUB_STEP_SUMMARY"
