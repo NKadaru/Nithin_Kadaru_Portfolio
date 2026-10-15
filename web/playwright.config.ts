@@ -10,7 +10,8 @@ const npm = process.platform === 'win32' ? 'npm.cmd' : 'npm'
 
 export default defineConfig({
   testDir: './e2e',
-  // The hero suite scrolls through 400vh and waits for rAF settling.
+  // The hero suite scrolls through the full 200vh section and waits for
+  // requestAnimationFrame settling at each checkpoint.
   timeout: 60_000,
   expect: { timeout: 10_000 },
   fullyParallel: false,
