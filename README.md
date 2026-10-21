@@ -1,8 +1,9 @@
 # Nithin Kadaru — Portfolio
 
-A premium, scroll-driven personal portfolio. The centrepiece is a **true 360°
-hero**: a 3D subject whose rotation is driven directly by scroll position, with
-the final frame landing exactly on the first.
+A premium, scroll-driven personal portfolio. The centrepiece is a
+**scroll-synchronised 360° WebGL hero**: a real 3D portrait object whose
+rotation is driven directly by scroll position, with the final orientation
+landing exactly on the first.
 
 **Live:** <https://nithin-kadaru-portfolio.vercel.app>
 
@@ -18,15 +19,15 @@ the final frame landing exactly on the first.
 | Scroll motion | GSAP ScrollTrigger · Lenis |
 | UI motion | Framer Motion |
 | Icons | Lucide React |
-| Fonts | Archivo · Inter · JetBrains Mono (self-hosted, no third-party requests) |
-| Tests | Playwright (26 end-to-end) |
-| Hosting | Cloudflare Pages (fully static) |
+| Fonts | Archivo · Inter · JetBrains Mono (self-hosted) |
+| Tests | Playwright (26 CI behavioural tests) |
+| Hosting | Vercel (fully static, deployment gated by GitHub Actions) |
 
 ---
 
 ## Running it
 
-> On Windows PowerShell use `npm.cmd` — the execution policy blocks npm's
+> On Windows PowerShell use `npm.cmd` — the execution policy may block npm's
 > PowerShell shim.
 
 ```bash
@@ -39,7 +40,7 @@ npm run dev        # http://localhost:5173
 npm run build      # typecheck + production build to dist/
 npm run lint       # oxlint
 npm run preview    # serve the production build on :4173
-npm run test:e2e   # Playwright (starts preview automatically)
+npm run test:e2e   # all Playwright specs; starts preview automatically
 ```
 
 ---
@@ -52,62 +53,102 @@ Scroll progress maps linearly onto the subject's Y rotation:
 group.rotation.y = progress * Math.PI * 2
 ```
 
-That single line gives several properties for free:
+That mapping provides:
 
-- **Exact start/end match.** `0` and `2π` radians are the same orientation by
-  definition, so the final frame is guaranteed identical to the first. A
-  pre-rendered frame sequence can only approximate this.
-- **Continuous at any scroll speed.** Nothing to step between, so no visible
-  ticking on a fast flick.
-- **Reversible.** Scrolling up decreases progress, which rotates backward.
-- **Constant scale.** Scale is never written to, anywhere.
-- **No autonomous motion.** Nothing moves unless the scroll position moves.
+- **Exact start/end match.** `0` and `2π` radians are the same orientation.
+- **Continuous movement.** There is no frame sequence to step through.
+- **Reversibility.** Scrolling upward decreases progress and rotates backward.
+- **Constant scale.** Scroll never changes the rotating group's scale.
+- **No autonomous motion.** The object moves only when scroll position moves.
 
-Pinning uses CSS `position: sticky` rather than GSAP's `pin`, which avoids the
-injected pin-spacer element — a common source of layout shift and of scroll
-height disagreements with Lenis.
+Pinning uses CSS `position: sticky` instead of GSAP's `pin`, avoiding an
+injected pin-spacer and its potential layout shift. Lenis is driven by GSAP's
+ticker so smooth scrolling and ScrollTrigger read the same frame state.
 
-Lenis is driven by GSAP's ticker rather than its own `requestAnimationFrame`
-loop. Two independent loops produce one-frame disagreements between the scroll
-position Lenis has applied and the one ScrollTrigger reads, which on a pinned
-rotation reads as jitter.
+The Three.js tree is lazy-loaded, device pixel ratio is capped, and the render
+loop pauses after the hero leaves the viewport. Reduced-motion users receive a
+static three-quarter pose.
 
-### Swapping in a different 3D subject
+### Portrait GLB
 
-`src/sections/hero/HeroSubject.tsx` is the only file that knows what is
-rotating. Everything else — pinning, scroll mapping, loader, framing, tests —
-is independent of it. The file carries full drop-in instructions.
+`web/src/sections/hero/HeroSubject.tsx` remains the only component that knows
+what rotates. It now loads:
 
-Current subject is a **procedural stand-in** (coded geometry, no asset file).
+```text
+web/public/models/nithin-portrait.glb
+```
 
-Requirements for a real `.glb`:
+The model was generated locally from `IMG_3511.JPG` and is approximately
+148 KB. It contains:
 
-- Binary glTF, single file, textures embedded
-- Under ~2 MB after `npx gltf-transform optimize in.glb out.glb`
-- Y-up, origin at the object's centre so it spins about its own axis
-- PBR materials, no baked-in lighting
-- Roughly `SUBJECT_HEIGHT` (4) units tall, or set `scale` to match
+- A cropped 768×1482 JPEG embedded inside the GLB
+- A gently curved portrait surface
+- A shallow dark backing and visible edge depth
+- An unlit photo material (`KHR_materials_unlit`) to preserve source colours
+- A centred origin and calibrated scale for the existing hero framing
+
+A single photograph cannot describe the unseen sides of a person. This asset is
+therefore intentionally a three-dimensional portrait object, not a fabricated
+full-body scan. During the complete revolution, the front photograph, curved
+edge and backing rotate through view.
+
+### Regenerating or replacing the portrait
+
+The reproducible converter is `web/scripts/create-portrait-glb.mjs`. It uses the
+project's installed Playwright Chromium browser for local JPEG decoding and
+never uploads the source image.
+
+From `web/`:
+
+```bash
+node scripts/create-portrait-glb.mjs "C:\path\to\portrait.jpg"
+```
+
+The default output is `public/models/nithin-portrait.glb`. An optional second
+argument can specify another output file:
+
+```bash
+node scripts/create-portrait-glb.mjs "C:\path\to\portrait.jpg" "public\models\portrait.glb"
+```
+
+The crop ratios in the converter are tuned for `IMG_3511.JPG`; adjust them for
+a differently composed photograph. If replacing the generated asset with a
+scanned model, keep it Y-up, centred on its rotation axis, self-contained, and
+close to four world units tall. Re-run the hero Playwright suite after changing
+its geometry or scale.
+
+The CSP permits `blob:` under both `img-src` and `connect-src` because
+GLTFLoader exposes the embedded texture through a temporary browser blob URL
+and loads it with the Fetch API.
 
 ---
 
 ## Project layout
 
-```
+```text
 web/
 ├─ src/
-│  ├─ content/content.ts     ← SINGLE SOURCE OF TRUTH for all copy and data
+│  ├─ content/content.ts     ← single source of truth for copy and data
 │  ├─ index.css              ← design tokens, type scale, base styles
 │  ├─ lib/                   ← Lenis, GSAP registration, reduced-motion hook
 │  ├─ components/            ← loader, navbar, cursor, reveal, section shells
 │  └─ sections/
-│     ├─ hero/               ← Hero, HeroCanvas (rotation driver), HeroSubject
-│     └─ …                   ← About, Marquee, Work, Experience, Skills, …
-├─ e2e/                      ← Playwright specs + OG image generator
-└─ public/                   ← favicon, robots, sitemap, _headers, og image
+│     ├─ hero/               ← pinning, rotation driver, GLB subject seam
+│     └─ …                   ← About, Work, Experience, Skills, Contact, …
+├─ public/
+│  ├─ models/                ← self-contained portrait GLB
+│  ├─ og/ and icons/         ← social and application images
+│  └─ _headers               ← optional Cloudflare-equivalent headers
+├─ scripts/
+│  ├─ create-portrait-glb.mjs
+│  └─ make-vercel-output.mjs
+├─ e2e/                      ← behavioural, visual-capture and image-generator specs
+├─ vercel.json               ← Vercel build settings and security headers
+└─ playwright.config.ts
 ```
 
-**All visible copy lives in `src/content/content.ts`.** Components never
-hardcode strings, so content changes don't touch markup.
+**All visible copy lives in `src/content/content.ts`.** Components do not embed
+portfolio claims directly, so content changes remain separate from markup.
 
 ---
 
@@ -115,48 +156,63 @@ hardcode strings, so content changes don't touch markup.
 
 The content file enforces three rules:
 
-1. **No invented metrics.** An unknown number is `null`. It renders as a
-   dev-only TODO marker and is omitted entirely from production builds.
+1. **No invented metrics.** An unknown number is `null`; it appears as a
+   development-only TODO marker and is omitted from production builds.
 2. **No invented testimonials, clients or achievements.** Sections without real
    content are omitted rather than padded — see `omittedSections`.
-3. Anything marked `TODO:` is awaiting a real answer.
+3. Anything marked `TODO:` is awaiting a confirmed answer.
 
-`e2e/sections.spec.ts` asserts that no placeholder metrics and no TODO markers
+`e2e/sections.spec.ts` asserts that placeholder metrics and TODO markers never
 reach a production build.
 
 ---
 
 ## Tests
 
-```bash
-npm run test:e2e
-```
+The CI verification job runs 26 behavioural Playwright tests from
+`hero.spec.ts` and `sections.spec.ts`:
 
-26 Playwright tests. The ones worth knowing about:
+- **Rotation:** exactly one revolution; linear 0/25/50/75/100% mapping;
+  reversibility; constant scale; no drift after scrolling stops.
+- **Framing:** projected subject height stays within the intentional 64–74%
+  viewport band and remains horizontally centred throughout the revolution.
+- **Layout:** the canvas fills the viewport and hero/section text is rendered,
+  visible and not clipped.
+- **Content:** expected projects and roles render, links resolve, and unknown
+  metrics stay out of production.
+- **Accessibility:** reduced motion is static and the skip link is the first tab
+  stop.
 
-- **Rotation**: exactly one revolution; linear mapping through the 0/25/50/75/100%
-  keyframes; reverses on scroll-up; zero scale drift; no drift once scrolling stops.
-- **Framing**: subject occupies 75–85% of viewport height and stays centred,
-  measured by projecting its bounding box through the camera (a WebGL canvas
-  can't be pixel-read without `preserveDrawingBuffer`, which would cost
-  performance on every frame just to enable a test).
-- **Geometric text visibility**: section headings are checked for *rendered*
-  visibility, not text content. A mask-based reveal can leave text present in
-  the DOM but clipped out of view, and every content assertion still passes.
-  That bug shipped once; it can't again.
-- **Accessibility**: reduced-motion holds a static pose; skip link is the first
-  tab stop; external links carry `rel="noopener"`.
+WebGL runs under SwiftShader on headless CI. `shots.spec.ts` and
+`og-image.spec.ts` are auxiliary capture/generator specs and are not part of the
+26-test deployment gate.
 
-WebGL in headless CI runs under SwiftShader — see `playwright.config.ts`.
+---
+
+## Deployment
+
+Production is deployed to Vercel by `.github/workflows/ci.yml`.
+
+1. A push or pull request to `main` runs install, lint, build and the 26
+   behavioural Playwright tests.
+2. Pull requests stop after verification and never deploy.
+3. A successful push to `main` uploads the tested `dist/` artifact.
+4. The gated deploy job creates Vercel's output wrapper, replaces its static
+   payload with that tested artifact, and deploys it to production.
+5. CI verifies that the public production alias returns the application shell.
+
+Vercel Git deployment for `main` is disabled in `web/vercel.json`, ensuring a
+failed verification cannot be bypassed by an independent automatic deployment.
+Security headers are defined in that file; `web/public/_headers` is retained as
+a Cloudflare Pages equivalent but is ignored by Vercel.
 
 ---
 
 ## Accessibility
 
-Semantic landmarks, a skip link, keyboard-operable navigation with Escape to
-close the mobile menu, visible focus rings, `prefers-reduced-motion` honoured in
-both JS and CSS (animation is replaced with instant state, not slowed down), and
-the decorative canvas marked `aria-hidden`.
+The site provides semantic landmarks, a skip link, keyboard-operable navigation
+with Escape handling, visible focus rings, `prefers-reduced-motion` support in
+both JS and CSS, and a decorative canvas marked `aria-hidden`.
 
 ---
 
