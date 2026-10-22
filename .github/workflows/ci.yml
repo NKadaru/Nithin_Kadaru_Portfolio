@@ -15,9 +15,9 @@ jobs:
         working-directory: web
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7.0.1
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7.1.0
         with:
           node-version-file: web/.nvmrc
           cache: npm
@@ -43,7 +43,7 @@ jobs:
 
       - name: Upload test artifacts on failure
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: playwright-results
           path: web/test-results/
@@ -53,7 +53,7 @@ jobs:
       # pipeline's shape: the artifact that passed the tests above is the exact
       # artifact that goes live, with no second build anywhere.
       - name: Upload build for deployment
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: dist
           path: web/dist/
@@ -81,9 +81,9 @@ jobs:
     # it descends into `web` itself, which is the documented layout.
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7.0.1
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7.1.0
         with:
           node-version-file: web/.nvmrc
           cache: npm
@@ -93,7 +93,7 @@ jobs:
       # whatever `vercel build` produces, so the bytes that go live are the
       # bytes the tests ran against.
       - name: Download the tested build
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8.0.2
         with:
           name: dist
           path: tested-dist/
