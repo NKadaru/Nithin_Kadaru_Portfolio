@@ -1,3 +1,4 @@
+import { Analytics } from '@vercel/analytics/react'
 import { useCallback, useEffect, useState } from 'react'
 import { Cursor } from './components/Cursor'
 import { Loader } from './components/Loader'
@@ -70,6 +71,7 @@ export default function App() {
       </main>
 
       <Footer />
+      <Analytics />
     </>
   )
 }
