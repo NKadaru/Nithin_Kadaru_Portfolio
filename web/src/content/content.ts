@@ -11,7 +11,8 @@
  *   2. No invented testimonials, client names, or achievements.
  *   3. Anything marked `TODO:` is awaiting a real answer from Nithin.
  *
- * Sources: PORTFOLIO_QUESTIONNAIRE.md (Parts 0–19) + DECISIONS.md.
+ * Sources: Nithin_Kadaru_Full_Stack_Software_Engineer_Resume (2026-10-28),
+ * which supersedes PORTFOLIO_QUESTIONNAIRE.md where they differ, + DECISIONS.md.
  */
 
 export interface NavLink {
@@ -64,6 +65,14 @@ export interface SkillGroup {
   items: string[]
 }
 
+export interface EducationItem {
+  degree: string
+  field: string
+  school: string
+  location: string
+  graduated: string
+}
+
 export interface Principle {
   title: string
   detail: string
@@ -75,11 +84,12 @@ export interface Principle {
 
 export const site = {
   wordmark: 'NITHIN',
-  fullName: 'Nithin Kadaru',
-  roleLabel: '.NET DEVELOPER',
-  seoTitle: 'Nithin Kadaru — Backend .NET Engineer',
+  /** Name exactly as it appears on the resume. */
+  fullName: 'Nithin Reddy Kadaru',
+  roleLabel: 'FULL-STACK SOFTWARE ENGINEER',
+  seoTitle: 'Nithin Kadaru — Full-Stack Software Engineer',
   seoDescription:
-    'Backend .NET engineer building the APIs, services and integrations enterprise systems run on. Selected work, experience and contact.',
+    'Full-stack software engineer building enterprise C#/.NET, Java/Spring Boot and Angular applications on SQL Server and AWS. Selected work, experience and contact.',
   /**
    * Q1.9: no custom domain yet — Vercel project subdomain.
    *
@@ -91,18 +101,15 @@ export const site = {
    *   - public/robots.txt
    */
   canonicalUrl: 'https://nithin-kadaru-portfolio.vercel.app',
-  location: 'West Chester, PA',
+  location: 'Spring City, PA',
 } as const
 
 // ---------------------------------------------------------------------------
 // HERO (Q1.4, Q1.5, Q1.6, spec §9, §10)
 //
-// NOTE ON SOURCING: Q1.4 as submitted was a 60-word resume summary — unusable
-// at display type size (it would fill the viewport and bury the 3D subject the
-// spec requires at 75–85% height). The headline/supporting line below are
-// Nithin's own words, taken from the text he put in the Q1.6 field, which was
-// itself a headline rather than a button label. The full resume paragraph is
-// reused verbatim as the About copy. Nothing here is invented.
+// Headline is kept short so it never collides with the 3D subject. The
+// supporting line condenses the resume's professional summary; the full
+// summary is used verbatim as the About copy.
 // ---------------------------------------------------------------------------
 
 export const hero = {
@@ -113,9 +120,9 @@ export const hero = {
    * forbids ("without covering the face"). The rest of the sentence moves to
    * `supporting` below — no wording is lost, it is only redistributed.
    */
-  headline: 'I build scalable backend systems.',
+  headline: 'I build full-stack enterprise systems.',
   supporting:
-    'Modern full-stack web applications on C#, .NET, ASP.NET Core, REST APIs and SQL Server — secure, high-performance services that businesses run on.',
+    'C#/.NET, Java/Spring Boot and Angular applications on SQL Server and AWS — REST APIs, OAuth 2.0 security, automated testing and CI/CD.',
   primaryCta: { label: 'View My Work', href: '#work' },
   secondaryCta: { label: 'Download Resume', href: '/resume/Nithin-Kadaru-Resume.pdf' },
   scrollHint: 'SCROLL TO EXPLORE',
@@ -164,44 +171,43 @@ export const contact = {
   label: 'CONTACT',
   heading: 'Have a role in mind? Let’s talk.',
   supporting:
-    'Open to backend and full-stack .NET engineering roles. The fastest way to reach me is email — I reply to everything.',
+    'Open to full-stack and backend software engineering roles. The fastest way to reach me is email — I reply to everything.',
   email: 'nithin12.reddy@outlook.com',
   /**
-   * Phone (Q2.0): supplied privately, DELIBERATELY NOT RENDERED and
-   * deliberately not recorded in source — a number in a public repository is
-   * as scrapable as one in the page.
-   *
-   * Awaiting Nithin's decision between: omit entirely / JS-obfuscate /
-   * resume-PDF-only. Until then this stays null.
+   * Phone, as published on the 2026-10-28 resume. Nithin asked for every
+   * resume detail to appear on the site, so it is rendered. Set to null to
+   * hide it again — the Contact row disappears with it.
    */
-  phone: null as string | null,
+  phone: '334-372-9961' as string | null,
   resumeUrl: '/resume/Nithin-Kadaru-Resume.pdf',
-  /** TODO: Nithin to supply the actual PDF. Button hidden until the file exists. */
-  resumeAvailable: false,
+  /** PDF lives at public/resume/Nithin-Kadaru-Resume.pdf. */
+  resumeAvailable: true,
 } as const
 
 // ---------------------------------------------------------------------------
-// ABOUT (Q1.4 verbatim, spec §11)
+// ABOUT — resume PROFESSIONAL SUMMARY (2026-10-28), verbatim
 // ---------------------------------------------------------------------------
 
 export const about = {
   label: 'ABOUT',
-  heading: 'More than a .NET developer.',
+  heading: 'Full-stack, from schema to screen.',
   body: [
-    'Results-driven .NET backend and full-stack developer with experience designing, developing and maintaining scalable web applications using C#, .NET, ASP.NET Core, RESTful APIs, SQL Server and modern front-end technologies.',
-    'Skilled in building secure, high-performance solutions, integrating APIs, optimizing database operations and delivering reliable software aligned with business requirements.',
+    'Full-stack Software Engineer experienced in building enterprise C#/.NET, Java/Spring Boot, and Angular applications on SQL Server and AWS.',
+    'Designed and developed an end-to-end warehouse management and order fulfillment system and .NET 10 services that integrate two billing systems.',
+    'Strong in REST API design, OAuth 2.0 security, automated testing, Continuous Integration/Continuous Delivery (CI/CD), and mentoring newer engineers.',
   ],
 } as const
 
 /**
- * STATS (Q5.3) — spec §11 wants four. Only two are currently defensible from
- * the resume. The other two are `null` until Nithin supplies real figures;
- * they will not render rather than show a fabricated number.
+ * STATS (Q5.3) — spec §11 wants four. Three are defensible from the resume
+ * (Oct 2021 start, Oct 2022 CTDI start, "2 billing systems"). The mentoring
+ * count stays `null` until Nithin supplies a real figure; it will not render
+ * rather than show a fabricated number.
  */
 export const stats: Stat[] = [
   { value: 5, suffix: '+', label: 'Years shipping production software' },
   { value: 4, suffix: '+', label: 'Years building enterprise .NET at CTDI' },
-  { value: null, label: 'TODO: billing systems integrated' },
+  { value: 2, label: 'Billing systems integrated through .NET 10 services' },
   { value: null, label: 'TODO: engineers onboarded / mentored' },
 ]
 
@@ -211,25 +217,22 @@ export const stats: Stat[] = [
 
 export const marqueeItems: string[] = [
   '.NET ENGINEERING',
+  'JAVA & SPRING BOOT',
+  'ANGULAR',
   'REST API DESIGN',
-  'SYSTEM INTEGRATION',
+  'OAUTH 2.0 SECURITY',
   'CLOUD & CI/CD',
-  'FULL-STACK DEVELOPMENT',
-  'AI-ASSISTED DEVELOPMENT',
+  'AI AGENTS & LLM INTEGRATION',
 ]
 
 // ---------------------------------------------------------------------------
 // SELECTED WORK (Part 7, spec §13, §14)
 //
-// SOURCING NOTE: these four are drawn from work Nithin describes doing at CTDI
-// and TCS in his own Part 8 answers — real shipped systems, not the three
-// hypothetical project ideas from the Q1.6 answer (a support-ticket system, an
-// auth platform and a reporting dashboard), which he explicitly labelled
-// "project ideas, not claims that you've already built them."
+// SOURCING: every entry is taken from the 2026-10-28 resume — the CTDI and
+// TCS bullets plus the PROJECTS section. Nothing here is a hypothetical idea.
 //
-// `result` is null on every entry because no defensible metric has been
-// supplied yet. These are the highest-value blanks on the whole site:
-// a recruiter reads outcomes, not responsibilities.
+// `result` is filled only where the resume states an outcome. The rest stay
+// null: a recruiter reads outcomes, so these are the highest-value blanks.
 // ---------------------------------------------------------------------------
 
 export const projects: Project[] = [
@@ -237,12 +240,12 @@ export const projects: Project[] = [
     id: 'billing-translation-layer',
     title: 'Billing Systems Translation Layer',
     category: 'Enterprise Integration',
-    tech: ['.NET 10', 'C#', 'ASP.NET Core Web API', 'REST APIs', 'SQL Server'],
+    tech: ['.NET 10', 'C#', 'ASP.NET Core', 'REST APIs', 'SQL Server'],
     problem:
-      'Multiple billing platforms spoke incompatible data formats, so every new integration meant bespoke point-to-point glue code.',
+      'Two billing systems used different data formats, so the two applications that depend on them could not exchange data consistently.',
     approach:
-      'Built web services in .NET 10 that act as a translation layer between systems, normalizing data formats so disparate platforms communicate through one consistent contract.',
-    result: null, // TODO: systems integrated? integration time saved? volume handled?
+      'Built .NET 10 web services as a translation layer that normalizes data formats across both billing systems, giving the two applications one consistent contract.',
+    result: '2 billing systems normalized behind one layer, so 2 separate applications now exchange data consistently.',
     link: null,
     linkNote: 'Internal enterprise system — not publicly accessible',
   },
@@ -250,143 +253,198 @@ export const projects: Project[] = [
     id: 'warehouse-management',
     title: 'Warehouse Management & Order Fulfillment',
     category: 'Enterprise Platform',
-    tech: ['C#', 'ASP.NET Core', 'EF Core', 'SQL Server', '.NET Core MVC'],
+    tech: ['C#', '.NET', 'ASP.NET Core', 'EF Core', 'SQL Server'],
     problem:
-      'Inventory tracking, order processing and fulfillment workflows needed to run as one coherent end-to-end system.',
+      'Inventory tracking, order processing and fulfillment workflows needed to run as one end-to-end system.',
     approach:
-      'Designed and developed the platform end to end — inventory tracking, order processing and fulfillment workflows — including schema design, stored procedures and the REST APIs above them.',
+      'Designed and developed the system in C# and .NET end to end, from requirements gathering with clients and stakeholders through inventory tracking, order processing and fulfillment workflows, on SQL Server and Entity Framework Core data layers.',
     result: null, // TODO: orders/day? sites live? error-rate or throughput change?
     link: null,
     linkNote: 'Internal enterprise system — not publicly accessible',
   },
   {
     id: 'cloud-native-aws',
-    title: 'Cloud-Native Services on AWS',
+    title: 'Cloud Services & Authentication on AWS',
     category: 'Cloud & Platform',
-    tech: ['AWS Lambda', 'Cognito', 'ECS', 'S3', 'Elasticsearch/Kibana', 'PostgreSQL'],
+    tech: ['AWS Cognito', 'Secrets Manager', 'Lambda', 'ECS', 'S3', 'Elasticsearch/Kibana'],
     problem:
-      'Enterprise .NET workloads needed to run and scale as cloud-native services with managed auth, search and secret handling.',
+      'Enterprise .NET applications needed managed authentication, securely stored credentials and cloud-hosted features.',
     approach:
-      'Built and supported services across Lambda, ECS and S3, with Cognito for identity, Secrets Manager for credentials, PostgreSQL for persistence, and Elasticsearch/Kibana for search and observability.',
+      'Implemented authentication with AWS Cognito and managed credentials in AWS Secrets Manager; built and deployed cloud features using AWS Lambda, ECS, S3 and Elasticsearch/Kibana, released through GitLab CI/CD and Octopus Deploy.',
     result: null, // TODO: scale, cost change, or reliability figure
     link: null,
     linkNote: 'Internal enterprise system — not publicly accessible',
   },
   {
-    id: 'microservices-platform',
-    title: 'Microservices Platform with Angular Front End',
-    category: 'Microservices',
-    tech: ['Spring Boot', 'REST APIs', 'Angular', 'Spring Security', 'OAuth2', 'JUnit'],
+    id: 'hfo-wealth-management',
+    title: 'Family Wealth Reporting Microservices',
+    category: 'Microservices · Banking',
+    tech: ['Java', 'Spring Boot', 'Spring Security', 'OAuth 2.0', 'Angular', 'JUnit', 'Mockito'],
     problem:
-      'An enterprise application needed to move from monolithic delivery to independently deployable services with a modern front end.',
+      'The HFO wealth management project at PNC Private Bank Hawthorn needed account information combined with family member details, with each family’s page visible only to people the main account holder authorizes.',
     approach:
-      'Implemented a microservices architecture in Spring Boot exposing REST APIs to an Angular front end, secured with Spring Security and OAuth2, and covered by JUnit/Mockito test suites.',
-    result: null, // TODO: services delivered? coverage? release cadence?
+      'Designed RESTful Spring Boot microservices in layered controller, service and data-access designs. One retrieves account information with family member details and generates a report for each family, backed by a database of family members and page-access records. Endpoints use Spring Security and OAuth 2.0 token-based authentication with role-based authorization, and feed reusable Angular components and services.',
+    result: null, // TODO: families/reports served? defect rate? release cadence?
     link: null,
     linkNote: 'Delivered at Tata Consultancy Services — client system, not public',
+  },
+  {
+    id: 'workout-scheduler',
+    title: 'Workout Scheduler with an AI Agent',
+    category: 'Personal Project · AI Agents',
+    tech: ['Angular 20', 'TypeScript', '.NET 10', 'OAuth 2.0', 'WHOOP', 'Google Gemini'],
+    problem:
+      'A fixed workout plan does not account for how recovered you are on a given day.',
+    approach:
+      'Built a full-stack workout scheduler with Angular 20 (TypeScript) and a .NET 10 API, integrating WHOOP via OAuth 2.0. An AI agent built on Google Gemini reads WHOOP recovery data and adapts daily workout plans.',
+    result: null,
+    link: 'https://github.com/NKadaru/Schedule_Workouts',
   },
 ]
 
 // ---------------------------------------------------------------------------
 // EXPERIENCE (Part 8 — required for a job search, Q0.2)
-// Verbatim from Nithin's Q1.6/Part 8 answers.
+// Highlights are the 2026-10-28 resume bullets, verbatim.
 // ---------------------------------------------------------------------------
 
 export const experience: ExperienceItem[] = [
   {
     company: 'CTDI',
-    role: '.NET Developer',
+    role: 'Programmer',
     start: "Oct '22",
     end: 'Present',
     location: 'TODO: location',
     current: true,
     summary:
-      'Design, develop and maintain backend features for enterprise .NET applications, translating business and client requirements into technical designs and shipped implementations.',
+      'Design and develop enterprise C#/.NET applications on SQL Server and AWS, from client requirements through tested, automated releases.',
     highlights: [
-      'Built backend features across .NET Core MVC, .NET Core 3.1 and .NET 5, turning business and client requirements into technical designs.',
-      'Built server-side components and REST APIs in C# and ASP.NET Core Web API, with data access over SQL Server and EF Core — including schema design, stored procedures and functions.',
-      'Partnered directly with clients and business stakeholders to gather requirements and communicate progress through the development lifecycle.',
-      'Authored and executed automated unit and integration test suites to catch regressions before release.',
-      'Built and maintained CI/CD pipelines automating build, test and deployment across development, QA, staging and production.',
-      'Used AWS — Lambda, Cognito, ECS, S3, Elasticsearch/Kibana, Secrets Manager and PostgreSQL — to build and support cloud-native applications, adopting AI-assisted development tooling to improve delivery speed.',
-      'Built .NET 10 web services acting as a translation layer across multiple billing systems, normalizing formats for consistent communication between platforms.',
-      'Designed and developed an end-to-end warehouse management and order fulfillment system covering inventory tracking, order processing and fulfillment workflows.',
-      'Worked in an Agile/Scrum team through sprint planning, standups and retrospectives.',
-      'Onboarded new team members onto the codebase, tooling and workflows, mentoring them on coding standards and best practices.',
+      'Designed and developed an end-to-end warehouse management and order fulfillment system in C# and .NET, from requirements gathering with clients and stakeholders through inventory tracking, order processing, and fulfillment workflows.',
+      'Built .NET 10 web services as a translation layer that normalizes data formats across 2 billing systems, enabling 2 separate applications to exchange data consistently.',
+      'Developed and maintained C# and ASP.NET Core REST APIs with SQL Server and Entity Framework Core data layers, stored procedures, and functions across .NET Core 3.1, .NET 5, and .NET 10 applications.',
+      'Implemented authentication with AWS Cognito and managed credentials in AWS Secrets Manager; built and deployed cloud features using AWS Lambda, ECS, S3, and Elasticsearch/Kibana.',
+      'Wrote automated unit and integration tests and maintained GitLab CI/CD pipelines with Octopus Deploy releases across development, QA, staging, and production environments.',
+      'Mentored and onboarded new engineers on the codebase, tooling, and coding standards.',
     ],
     tech: [
       'C#',
       '.NET 10',
-      'ASP.NET Core Web API',
+      'ASP.NET Core',
       'EF Core',
       'SQL Server',
       'AWS',
-      'CI/CD',
-      'Agile/Scrum',
+      'GitLab CI/CD',
+      'Octopus Deploy',
     ],
   },
   {
-    company: 'Tata Consultancy Services — US',
+    company: 'Tata Consultancy Services (TCS)',
     role: 'Software Engineer',
     start: "Oct '21",
     end: "Oct '22",
-    location: 'TODO: location',
+    location: 'United States',
     summary:
-      'Delivered enterprise applications end to end within an Agile team, from requirements through design, implementation and testing.',
+      'Built RESTful Java/Spring Boot microservices and Angular features for the HFO wealth management project at PNC Private Bank Hawthorn.',
     highlights: [
-      'Worked across design, development, implementation and testing of enterprise applications in an Agile methodology.',
-      'Translated functional and non-functional requirements into system specifications with product designers and business customers, contributing to architecture aligned to client standards.',
-      'Implemented a microservices architecture in Spring Boot exposing REST APIs to an Angular front end, secured with Spring Security and OAuth2.',
-      'Used Angular services to retrieve and render server data, building new UI components and enhancements to existing applications.',
-      'Wrote unit tests with JUnit and Mockito to validate service behaviour.',
+      'Designed and developed RESTful microservices in Java and Spring Boot for the HFO wealth management project at PNC Private Bank Hawthorn, translating requirements from product owners, designers, and stakeholders into layered controller, service, and data-access designs.',
+      'Built a microservice that retrieves account information together with family member details and generates reports for each family, with a database storing family member details and page-access records.',
+      'Secured endpoints with Spring Security and OAuth 2.0, implementing token-based authentication and role-based authorization so only people authorized by the main account holder can access a family’s page.',
+      'Implemented REST endpoints with request validation and exception handling, integrated with the Angular application, and developed reusable Angular components and services that consumed them.',
+      'Wrote JUnit and Mockito tests covering service logic and exception scenarios to catch defects before release.',
     ],
-    tech: ['Java', 'Spring Boot', 'Spring Security', 'OAuth2', 'Angular', 'REST APIs', 'JUnit'],
+    tech: [
+      'Java',
+      'Spring Boot',
+      'Spring Security',
+      'OAuth 2.0',
+      'Angular',
+      'REST APIs',
+      'JUnit',
+      'Mockito',
+    ],
+  },
+]
+
+// ---------------------------------------------------------------------------
+// EDUCATION (2026-10-28 resume)
+// ---------------------------------------------------------------------------
+
+export const education: EducationItem[] = [
+  {
+    degree: 'Master of Science',
+    field: 'Computer Science',
+    school: 'Texas State University',
+    location: 'San Marcos, TX',
+    graduated: 'August 2021',
+  },
+  {
+    degree: 'Bachelor of Engineering',
+    field: 'Computer Science',
+    school: 'Osmania University',
+    location: 'Telangana, India',
+    graduated: 'May 2018',
   },
 ]
 
 // ---------------------------------------------------------------------------
 // SKILLS (Part 9, spec §15 — interactive typography, never percentage bars)
-// Categorized from Nithin's flat TECHNICAL SKILLS list, strongest group first.
+// Groups and items follow the resume's TECHNICAL SKILLS section.
 // ---------------------------------------------------------------------------
 
 export const skillGroups: SkillGroup[] = [
+  { label: 'Languages', items: ['C#', 'TypeScript', 'SQL', 'Java', 'HTML', 'CSS'] },
   {
-    label: 'Backend & Web',
+    label: 'Frameworks & Libraries',
     items: [
-      'ASP.NET Core Web API',
-      '.NET 10',
-      '.NET 5',
       '.NET Core',
-      'REST APIs',
+      '.NET 5',
+      '.NET 10',
+      'ASP.NET Core',
       'Entity Framework Core',
+      'Angular',
       'Blazor',
-      'Node.js',
+      'Spring Boot',
+      'Spring Security',
     ],
   },
-  { label: 'Languages', items: ['C#', 'Java', 'C++', 'C', 'SQL'] },
+  {
+    label: 'APIs & Architecture',
+    items: ['Object-Oriented Programming', 'REST APIs', 'Microservices', 'OAuth 2.0'],
+  },
   {
     label: 'Databases',
-    items: ['Microsoft SQL Server', 'PostgreSQL', 'Oracle', 'MySQL', 'MongoDB'],
+    items: ['Microsoft SQL Server', 'PostgreSQL', 'MySQL', 'MongoDB'],
   },
   {
     label: 'Cloud & DevOps',
-    items: ['AWS', 'CI/CD Pipelines', 'Git', 'GitBash', 'Agile/Scrum'],
+    items: [
+      'AWS Lambda',
+      'AWS Cognito',
+      'AWS ECS',
+      'AWS S3',
+      'AWS Secrets Manager',
+      'Elasticsearch/Kibana',
+      'CI/CD pipelines (GitLab, Octopus Deploy)',
+      'Git',
+    ],
   },
-  { label: 'Frontend', items: ['Angular', 'HTML', 'CSS', 'JavaScript', 'PHP'] },
   {
-    label: 'Tools',
-    items: ['Visual Studio', 'Postman', 'Eclipse IDE', 'PyCharm', 'Mockito', 'XAMPP'],
+    label: 'Testing & Tools',
+    items: [
+      'Unit & Integration Testing',
+      'JUnit',
+      'Mockito',
+      'Postman',
+      'Visual Studio',
+      'Agile/Scrum',
+    ],
   },
   {
     /**
-     * Honest framing. The resume evidence is "AI-first development and
-     * AI-assisted programming tools" — i.e. using AI to build software.
-     * Q0.3 asked to position "Agentic AI development", which would imply
-     * building agentic systems. No evidence for that was supplied, so the
-     * stronger claim is deliberately not made here. See DECISIONS.md.
+     * Backed by evidence on the resume: Kiro for AI-assisted development, and
+     * a Google Gemini agent in the Workout Scheduler project.
      */
-    label: 'AI-Assisted Development',
-    items: ['AI-first development workflow', 'Kiro', 'AI-assisted programming tooling'],
+    label: 'AI',
+    items: ['AI-assisted development (Kiro)', 'LLM integration (Google Gemini)', 'AI agents'],
   },
 ]
 
@@ -435,7 +493,7 @@ export const finalCta = {
 export const footer = {
   wordmark: site.wordmark,
   centerLine: 'Built with curiosity + code',
-  copyright: `© ${new Date().getFullYear()} Nithin Kadaru`,
+  copyright: `© ${new Date().getFullYear()} ${site.fullName}`,
 } as const
 
 // ---------------------------------------------------------------------------

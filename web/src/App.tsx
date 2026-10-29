@@ -8,6 +8,7 @@ import { ScrollTrigger } from './lib/gsap'
 import { About } from './sections/About'
 import { Contact, FinalCta, Footer } from './sections/Contact'
 import { Experience } from './sections/Experience'
+import { Education } from './sections/Education'
 import { Hero } from './sections/hero/Hero'
 import { HowIWork } from './sections/HowIWork'
 import { Marquee } from './sections/Marquee'
@@ -64,6 +65,7 @@ export default function App() {
         <Marquee />
         <Work />
         <Experience />
+        <Education />
         <Skills />
         <HowIWork />
         <Contact />

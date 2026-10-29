@@ -1,4 +1,4 @@
-import { ArrowUpRight, FileText, Github, Linkedin, Mail } from 'lucide-react'
+import { ArrowUpRight, FileText, Github, Linkedin, Mail, Phone } from 'lucide-react'
 import {
   contact,
   finalCta,
@@ -71,6 +71,27 @@ export function Contact() {
               </span>
             </a>
           </Reveal>
+
+          {contact.phone ? (
+            <Reveal delay={0.04}>
+              <a
+                href={`tel:+1${contact.phone.replace(/\D/g, '')}`}
+                data-cursor="view"
+                className="group flex items-center justify-between gap-4 border-t border-hairline py-8 transition-colors duration-500 hover:border-accent"
+              >
+                <span>
+                  <span className="label mb-3 block">Phone</span>
+                  <span className="font-display text-[clamp(1.125rem,2.2vw,1.75rem)] text-bone transition-colors duration-500 group-hover:text-accent">
+                    {contact.phone}
+                  </span>
+                </span>
+                <Phone
+                  className="h-5 w-5 shrink-0 text-muted transition-colors duration-500 group-hover:text-accent"
+                  aria-hidden="true"
+                />
+              </a>
+            </Reveal>
+          ) : null}
 
           {socials
             .filter((social) => social.icon !== 'mail')

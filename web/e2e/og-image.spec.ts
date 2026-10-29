@@ -62,16 +62,16 @@ test('generate og:image', async ({ page }) => {
       <body>
         <div class="top">
           <span class="mark">NITHIN KADARU</span>
-          <span class="role">.NET Developer</span>
+          <span class="role">Full-Stack Software Engineer</span>
         </div>
 
         <div>
           <div class="rule"></div>
-          <h1>I build scalable backend systems.</h1>
+          <h1>I build full-stack enterprise systems.</h1>
         </div>
 
         <div class="bottom">
-          <span>Backend &amp; Full-Stack .NET Engineer</span>
+          <span>C#/.NET · Java/Spring Boot · Angular</span>
           <span class="stack">C# · ASP.NET Core · SQL Server · AWS</span>
         </div>
       </body>

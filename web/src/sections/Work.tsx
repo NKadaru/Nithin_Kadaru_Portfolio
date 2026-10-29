@@ -21,7 +21,7 @@ export function Work() {
       <SectionHeading
         label="SELECTED WORK"
         heading="Systems I’ve designed, built and shipped."
-        supporting="Enterprise platforms and integrations delivered at CTDI and Tata Consultancy Services. Internal systems, so there are no public links — the engineering is described instead."
+        supporting="Enterprise platforms and integrations delivered at CTDI and Tata Consultancy Services, plus a personal AI-agent project. The enterprise systems are internal, so their engineering is described instead of linked."
       />
 
       <ol className="flex flex-col">

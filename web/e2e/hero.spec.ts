@@ -288,7 +288,7 @@ test.describe('Hero accessibility & layout', () => {
     await bootHero(page)
 
     await expect(page.getByRole('heading', { level: 1 })).toContainText(
-      'scalable backend systems',
+      'full-stack enterprise systems',
     )
     await expect(page.getByText('SCROLL TO EXPLORE')).toBeVisible()
     await expect(page.getByRole('link', { name: /view my work/i })).toBeVisible()

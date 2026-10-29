@@ -20,7 +20,7 @@ landing exactly on the first.
 | UI motion | Framer Motion |
 | Icons | Lucide React |
 | Fonts | Archivo · Inter · JetBrains Mono (self-hosted) |
-| Tests | Playwright (26 CI behavioural tests) |
+| Tests | Playwright (28 CI behavioural tests) |
 | Hosting | Vercel (fully static, deployment gated by GitHub Actions) |
 
 ---
@@ -169,7 +169,7 @@ reach a production build.
 
 ## Tests
 
-The CI verification job runs 26 behavioural Playwright tests from
+The CI verification job runs 28 behavioural Playwright tests from
 `hero.spec.ts` and `sections.spec.ts`:
 
 - **Rotation:** exactly one revolution; linear 0/25/50/75/100% mapping;
@@ -185,7 +185,7 @@ The CI verification job runs 26 behavioural Playwright tests from
 
 WebGL runs under SwiftShader on headless CI. `shots.spec.ts` and
 `og-image.spec.ts` are auxiliary capture/generator specs and are not part of the
-26-test deployment gate.
+28-test deployment gate.
 
 ---
 
@@ -193,7 +193,7 @@ WebGL runs under SwiftShader on headless CI. `shots.spec.ts` and
 
 Production is deployed to Vercel by `.github/workflows/ci.yml`.
 
-1. A push or pull request to `main` runs install, lint, build and the 26
+1. A push or pull request to `main` runs install, lint, build and the 28
    behavioural Playwright tests.
 2. Pull requests stop after verification and never deploy.
 3. A successful push to `main` uploads the tested `dist/` artifact.

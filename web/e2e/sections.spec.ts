@@ -15,9 +15,10 @@ import { expect, test, type Page } from '@playwright/test'
  */
 
 const SECTIONS = [
-  { id: 'about', heading: 'More than a .NET developer.' },
+  { id: 'about', heading: 'Full-stack, from schema to screen.' },
   { id: 'work', heading: 'Systems I’ve designed, built and shipped.' },
   { id: 'experience', heading: 'Where I’ve done the work.' },
+  { id: 'education', heading: 'Where I studied.' },
   { id: 'skills', heading: 'The stack I work in.' },
   { id: 'how-i-work', heading: 'How I operate.' },
   { id: 'contact', heading: 'Have a role in mind? Let’s talk.' },
@@ -84,16 +85,28 @@ test.describe('Sections render', () => {
     await scrollTo(page, 'work')
 
     const items = page.locator('#work ol > li')
-    await expect(items).toHaveCount(4)
+    await expect(items).toHaveCount(5)
 
     // Each entry must carry real substance, not just a title.
-    await expect(page.locator('#work').getByText('Problem', { exact: true })).toHaveCount(4)
-    await expect(page.locator('#work').getByText('Approach', { exact: true })).toHaveCount(4)
+    await expect(page.locator('#work').getByText('Problem', { exact: true })).toHaveCount(5)
+    await expect(page.locator('#work').getByText('Approach', { exact: true })).toHaveCount(5)
 
     // Project titles must be visible, not clipped.
     const firstTitle = page.locator('#work h3').first()
     await expect(firstTitle).toBeVisible()
     await expect(firstTitle).toContainText('Billing Systems Translation Layer')
+
+    // The one public project links to its real repository.
+    await expect(page.locator('#work a[href="https://github.com/NKadaru/Schedule_Workouts"]')).toHaveCount(1)
+  })
+
+  test('education lists both degrees', async ({ page }) => {
+    await boot(page)
+    await scrollTo(page, 'education')
+
+    await expect(page.locator('#education ol > li')).toHaveCount(2)
+    await expect(page.locator('#education')).toContainText('Texas State University')
+    await expect(page.locator('#education')).toContainText('Osmania University')
   })
 
   test('experience lists both roles with dates', async ({ page }) => {
@@ -124,6 +137,17 @@ test.describe('Sections render', () => {
     // External links must not leak referrer or allow tab-nabbing.
     await expect(linkedin).toHaveAttribute('rel', /noopener/)
     await expect(linkedin).toHaveAttribute('target', '_blank')
+
+    const phone = page.locator('#contact a[href^="tel:"]').first()
+    await expect(phone).toHaveAttribute('href', 'tel:+13343729961')
+
+    // The resume download must point at a file that actually exists.
+    const resume = page.locator('#contact a[href$=".pdf"]').first()
+    await expect(resume).toBeVisible()
+    const href = await resume.getAttribute('href')
+    const response = await page.request.get(href!)
+    expect(response.status()).toBe(200)
+    expect(response.headers()['content-type']).toContain('pdf')
   })
 
   /**
@@ -174,6 +198,6 @@ test.describe('Sections render', () => {
     const footer = page.locator('footer')
     await expect(footer).toBeVisible()
     await expect(footer).toContainText('Built with curiosity + code')
-    await expect(footer).toContainText('Nithin Kadaru')
+    await expect(footer).toContainText('Nithin Reddy Kadaru')
   })
 })
