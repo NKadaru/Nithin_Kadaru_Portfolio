@@ -313,7 +313,7 @@ export const experience: ExperienceItem[] = [
     role: 'Programmer',
     start: "Oct '22",
     end: 'Present',
-    location: 'TODO: location',
+    location: 'West Chester, PA',
     current: true,
     summary:
       'Design and develop enterprise C#/.NET applications on SQL Server and AWS, from client requirements through tested, automated releases.',
@@ -323,6 +323,7 @@ export const experience: ExperienceItem[] = [
       'Developed and maintained C# and ASP.NET Core REST APIs with SQL Server and Entity Framework Core data layers, stored procedures, and functions across .NET Core 3.1, .NET 5, and .NET 10 applications.',
       'Implemented authentication with AWS Cognito and managed credentials in AWS Secrets Manager; built and deployed cloud features using AWS Lambda, ECS, S3, and Elasticsearch/Kibana.',
       'Wrote automated unit and integration tests and maintained GitLab CI/CD pipelines with Octopus Deploy releases across development, QA, staging, and production environments.',
+      'Worked on site at warehouses in Albany and Coatesville alongside operations teams.',
       'Mentored and onboarded new engineers on the codebase, tooling, and coding standards.',
     ],
     tech: [
