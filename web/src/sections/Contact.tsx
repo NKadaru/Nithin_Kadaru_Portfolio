@@ -152,7 +152,7 @@ export function FinalCta() {
       aria-label="Get in touch"
       className="gutter border-t border-hairline py-28 text-center md:py-40"
     >
-      <h2 className="mx-auto max-w-[24ch] font-display text-[clamp(2rem,6vw,5rem)] leading-[0.95] tracking-[-0.04em] text-bone">
+      <h2 className="mx-auto max-w-[24ch] font-display text-[clamp(1.875rem,calc(6vw_-_0.125rem),4.875rem)] leading-[0.95] tracking-[-0.04em] text-bone">
         <RevealText>{finalCta.heading}</RevealText>
       </h2>
 

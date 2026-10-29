@@ -26,7 +26,7 @@ export function Skills() {
             delay={groupIndex * 0.05}
             className="grid gap-5 border-t border-hairline py-9 md:grid-cols-[14rem_1fr] md:gap-12"
           >
-            <h3 className="label pt-1.5">{group.label}</h3>
+            <h3 className="label pt-1.5 [font-size:calc(var(--text-label)_-_0.125rem)]">{group.label}</h3>
 
             <ul className="flex flex-wrap items-baseline gap-x-7 gap-y-3">
               {group.items.map((item) => (

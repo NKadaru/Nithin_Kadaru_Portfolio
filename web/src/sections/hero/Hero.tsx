@@ -155,7 +155,7 @@ export function Hero() {
                 wrapper: `ch` resolves against the element's OWN font-size, so
                 on a 16px wrapper 16ch is ~128px and clips the display type.
               */}
-              <h1 className="max-w-[13ch] font-display text-[clamp(1.875rem,3.4vw,3rem)] leading-[1.0] tracking-[-0.03em] text-bone">
+              <h1 className="max-w-[13ch] font-display text-[clamp(1.75rem,calc(3.4vw_-_0.125rem),2.875rem)] leading-[1.0] tracking-[-0.03em] text-bone">
                 <span className="mask">
                   <motion.span
                     className="block"

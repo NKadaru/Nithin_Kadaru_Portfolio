@@ -50,7 +50,7 @@ function ProjectRow({ project, index }: { project: Project; index: number }) {
           <div>
             <p className="label mb-4">{project.category}</p>
 
-            <h3 className="max-w-[22ch] font-display text-h3 text-bone transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] md:text-[clamp(1.5rem,2.6vw,2.25rem)] md:group-hover:translate-x-2">
+            <h3 className="max-w-[22ch] font-display text-h3 text-bone transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] md:text-[clamp(1.375rem,calc(2.6vw_-_0.125rem),2.125rem)] md:group-hover:translate-x-2">
               <RevealText>{project.title}</RevealText>
             </h3>
 
