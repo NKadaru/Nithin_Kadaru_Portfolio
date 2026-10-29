@@ -15,6 +15,7 @@ export function Experience() {
       <SectionHeading
         label="EXPERIENCE"
         heading="Where I’ve done the work."
+        compact
       />
 
       <ol className="flex flex-col">
@@ -34,7 +35,7 @@ function RoleRow({ role }: { role: ExperienceItem }) {
       <Reveal as="article" className="grid gap-8 py-12 md:grid-cols-[14rem_1fr] md:gap-12 md:py-16">
         {/* Left rail: dates, location, status */}
         <div className="flex flex-col gap-3">
-          <p className="font-mono text-xs tracking-wider text-bone-dim">
+          <p className="font-mono text-sm tracking-wider text-bone-dim">
             {role.start} — {role.end}
           </p>
 
@@ -48,7 +49,7 @@ function RoleRow({ role }: { role: ExperienceItem }) {
           {locationIsTodo ? (
             <TodoChip>Location</TodoChip>
           ) : (
-            <p className="font-mono text-[0.625rem] tracking-wider text-faint uppercase">
+            <p className="font-mono text-xs tracking-wider text-faint uppercase">
               {role.location}
             </p>
           )}

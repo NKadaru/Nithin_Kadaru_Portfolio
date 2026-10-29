@@ -11,7 +11,7 @@ import { Section, SectionHeading } from '../components/Section'
 export function Education() {
   return (
     <Section id="education" label="EDUCATION">
-      <SectionHeading label="EDUCATION" heading="Where I studied." />
+      <SectionHeading label="EDUCATION" heading="Where I studied." compact />
 
       <ol className="flex flex-col">
         {education.map((item) => (
@@ -30,8 +30,8 @@ function DegreeRow({ item }: { item: EducationItem }) {
         className="grid gap-6 py-10 md:grid-cols-[14rem_1fr] md:gap-12 md:py-12"
       >
         <div className="flex flex-col gap-3">
-          <p className="font-mono text-xs tracking-wider text-bone-dim">{item.graduated}</p>
-          <p className="font-mono text-[0.625rem] tracking-wider text-faint uppercase">
+          <p className="font-mono text-sm tracking-wider text-bone-dim">{item.graduated}</p>
+          <p className="font-mono text-xs tracking-wider text-faint uppercase">
             {item.location}
           </p>
         </div>
